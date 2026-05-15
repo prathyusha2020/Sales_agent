@@ -1,1 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sales Agent Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #fbfaff;
+    --ink: #2a1f3d;
+    --ink-soft: #6b5b8a;
+    --muted: #9b8db5;
+    --line: #e8e0f3;
+    --line-soft: #f0eaf8;
+    --accent: #8b5cf6;
+    --accent-soft: #a78bfa;
+    --accent-pale: #ede9fe;
+    --accent-deep: #6d28d9;
+    --surface: #ffffff;
+    --surface-tint: #faf7ff;
+    --success: #10b981;
+    --success-soft: #d1fae5;
+    --shadow-sm: 0 1px 2px rgba(139, 92, 246, 0.06);
+    --shadow-md: 0 4px 16px rgba(139, 92, 246, 0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 15% 5%, rgba(167, 139, 250, 0.07) 0%, transparent 45%),
+      radial-gradient(circle at 85% 95%, rgba(196, 181, 253, 0.08) 0%, transparent 50%);
+    background-attachment: fixed;
+    color: var(--ink);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 28px 24px 40px;
+  }
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 26px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .brand-mark {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent-soft) 0%, var(--accent) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 19px;
+    box-shadow: var(--shadow-sm);
+  }
+  .brand-text h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+  }
+  .brand-text p {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 1px;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--success-soft);
+    color: #047857;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .pill .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 18px 20px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--accent-soft), var(--accent));
+    opacity: 0.7;
+  }
+  .kpi .label {
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .kpi .value {
+    font-family: 'Fraunces', serif;
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .kpi .delta {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .kpi .delta.up { color: #047857; }
+  .kpi .delta.down { color: #b91c1c; }
+  .grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 18px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 980px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    min-height: 580px;
+  }
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .panel-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--ink);
+  }
+  .panel-sub {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .log {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 0;
+  }
+  .log::-webkit-scrollbar { width: 6px; }
+  .log::-webkit-scrollbar-track { background: transparent; }
+  .log::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+  .log::-webkit-scrollbar-thumb:hover { background: var(--accent-soft); }
+  .msg {
+    max-width: 88%;
+    padding: 12px 16px;
+    border-radius: 14px;
+    line-height: 1.55;
+    font-size: 14px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    animation: slideIn 0.22s ease-out;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .msg.user {
+    align-self: flex-end;
+    background: linear-gradient(135deg, var(--accent-soft) 0%, var(--accent) 100%);
+    color: white;
+    border-bottom-right-radius: 5px;
+  }
+  .msg.agent {
+    align-self: flex-start;
+    background: var(--surface-tint);
+    border: 1px solid var(--line-soft);
+    border-bottom-left-radius: 5px;
+  }
+  .msg.thinking {
+    color: var(--muted);
+    font-style: italic;
+    background: var(--accent-pale);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .msg strong { font-weight: 600; color: var(--ink); }
+  .msg code {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    background: var(--accent-pale);
+    color: var(--accent-deep);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12.5px;
+  }
+  .msg .bullet {
+    display: flex;
+    gap: 8px;
+    margin: 4px 0;
+    align-items: flex-start;
+  }
+  .msg .bullet-mark { color: var(--accent); flex-shrink: 0; }
+  .dots { display: inline-flex; gap: 3px; }
+  .dots span {
+    width: 5px; height: 5px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: bounce 1.2s infinite;
+  }
+  .dots span:nth-child(2) { animation-delay: 0.15s; }
+  .dots span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes bounce {
+    0%, 100% { opacity: 0.3; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+  form {
+    margin-top: 14px;
+    display: flex;
+    gap: 8px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line-soft);
+  }
+  input[type="text"] {
+    flex: 1;
+    padding: 11px 14px;
+    border: 1.5px solid var(--line);
+    background: white;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  input::placeholder { color: var(--muted); }
+  input:focus { border-color: var(--accent-soft); box-shadow: 0 0 0 4px var(--accent-pale); }
+  button.send {
+    padding: 11px 22px;
+    background: linear-gradient(135deg, var(--accent-soft) 0%, var(--accent) 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.15s;
+    box-shadow: var(--shadow-sm);
+  }
+  button.send:hover:not(:disabled) { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  button.send:disabled { opacity: 0.5; cursor: not-allowed; }
+  .suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 14px;
+  }
+  .chip {
+    padding: 7px 13px;
+    background: var(--surface-tint);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .chip:hover {
+    background: var(--accent-pale);
+    border-color: var(--accent-soft);
+    color: var(--accent-deep);
+  }
+  .sparkline {
+    margin-bottom: 18px;
+    padding: 14px 16px 12px;
+    background: var(--surface-tint);
+    border-radius: 12px;
+    border: 1px solid var(--line-soft);
+  }
+  .spark-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+  .spark-label {
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+  .spark-stat {
+    font-size: 12px;
+    color: var(--accent-deep);
+    font-weight: 600;
+  }
+  .activity-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    min-height: 0;
+  }
+  .activity-list::-webkit-scrollbar { width: 6px; }
+  .activity-list::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+  .activity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 4px;
+    border-bottom: 1px solid var(--line-soft);
+    animation: slideIn 0.25s ease-out;
+  }
+  .activity:last-child { border-bottom: none; }
+  .activity-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--accent-pale);
+    color: var(--accent-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .activity-body {
+    flex: 1;
+    min-width: 0;
+  }
+  .activity-name {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 1px;
+  }
+  .activity-detail {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .activity-meta {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .activity-value {
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .activity-when {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+  .empty-state {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    padding: 32px 20px;
+  }
+  .upsell {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 32px 30px;
+    box-shadow: var(--shadow-sm);
+    background-image:
+      radial-gradient(circle at 90% 10%, var(--accent-pale) 0%, transparent 50%),
+      radial-gradient(circle at 10% 90%, var(--accent-pale) 0%, transparent 50%);
+  }
+  .upsell-head {
+    text-align: center;
+    margin-bottom: 26px;
+  }
+  .upsell-tag {
+    display: inline-block;
+    padding: 5px 12px;
+    background: var(--accent-pale);
+    color: var(--accent-deep);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .upsell h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 26px;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--ink) 0%, var(--accent-deep) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .upsell-head p {
+    color: var(--ink-soft);
+    font-size: 14.5px;
+    max-width: 580px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  .upsell-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .upsell-feature {
+    padding: 20px;
+    background: var(--surface-tint);
+    border-radius: 14px;
+    border: 1px solid var(--line-soft);
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  }
+  .upsell-feature:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent-soft);
+    box-shadow: var(--shadow-md);
+  }
+  .upsell-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent-soft) 0%, var(--accent) 100%);
+    color: white;
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .upsell-feature h3 {
+    font-size: 15px;
+    color: var(--ink);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .upsell-feature p {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .upsell-feature em {
+    color: var(--accent-deep);
+    font-style: normal;
+    font-weight: 500;
+  }
+  .upsell-cta {
+    text-align: center;
+    padding-top: 14px;
+    border-top: 1px solid var(--line-soft);
+  }
+  .cta-btn {
+    padding: 13px 28px;
+    background: linear-gradient(135deg, var(--accent-soft) 0%, var(--accent) 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 14.5px;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.1s, box-shadow 0.15s;
+    margin-bottom: 10px;
+  }
+  .cta-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+  .cta-note {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  footer {
+    margin-top: 26px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 12.5px;
+  }
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(42, 31, 61, 0.55);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .modal {
+    position: relative;
+    background: white;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 32px 30px 26px;
+    box-shadow: 0 24px 60px rgba(139, 92, 246, 0.25);
+    border: 1px solid var(--line);
+    transform: translateY(10px);
+    transition: transform 0.22s;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: var(--surface-tint);
+    color: var(--ink-soft);
+    border-radius: 8px;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .modal-close:hover { background: var(--accent-pale); color: var(--accent-deep); }
+  .modal-header { margin-bottom: 18px; }
+  .modal-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--accent-pale);
+    color: var(--accent-deep);
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .modal h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .modal-header p {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+  .modal-form { display: flex; flex-direction: column; gap: 12px; }
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 480px) {
+    .field-row { grid-template-columns: 1fr; }
+  }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+  .field input, .field textarea {
+    padding: 10px 12px;
+    border: 1.5px solid var(--line);
+    background: white;
+    border-radius: 9px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    resize: vertical;
+  }
+  .field input::placeholder, .field textarea::placeholder { color: var(--muted); }
+  .field input:focus, .field textarea:focus {
+    border-color: var(--accent-soft);
+    box-shadow: 0 0 0 4px var(--accent-pale);
+  }
+  .checkbox-field {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    padding: 11px 12px;
+    background: var(--surface-tint);
+    border: 1px solid var(--line-soft);
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .checkbox-field input { margin-top: 2px; accent-color: var(--accent); }
+  .modal-error {
+    color: #b91c1c;
+    font-size: 12.5px;
+    min-height: 0;
+  }
+  .modal-error:not(:empty) {
+    padding: 8px 11px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+  }
+  .modal-submit {
+    padding: 12px;
+    background: linear-gradient(135deg, var(--accent-soft) 0%, var(--accent) 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.1s, box-shadow 0.15s;
+    margin-top: 4px;
+  }
+  .modal-submit:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+  .modal-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+  .modal-fineprint {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .modal-success { text-align: center; padding: 12px 0; }
+  .success-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 14px;
+    background: linear-gradient(135deg, var(--accent-soft) 0%, var(--accent) 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 600;
+  }
+  .modal-success h4 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .modal-success p {
+    color: var(--ink-soft);
+    font-size: 13.5px;
+    line-height: 1.6;
+    max-width: 380px;
+    margin: 0 auto 18px;
+  }
+  .modal-success strong { color: var(--accent-deep); }
+</style>
+</head>
+<body>
+<div class="page">
 
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">S</div>
+      <div class="brand-text">
+        <h1>Sales operations copilot</h1>
+        <p>Ask your CRM anything · search leads, pipeline, knowledge base</p>
+      </div>
+    </div>
+    <span class="pill"><span class="dot"></span> copilot online</span>
+  </div>
+
+  <div class="kpis" id="kpis">
+    <div class="kpi"><div class="label">Pipeline value</div><div class="value" id="kpi-pipeline">—</div><div class="delta">across all open leads</div></div>
+    <div class="kpi"><div class="label">Leads this week</div><div class="value" id="kpi-leads-week">—</div><div class="delta" id="kpi-leads-delta">—</div></div>
+    <div class="kpi"><div class="label">Qualified rate</div><div class="value" id="kpi-qualified">—</div><div class="delta">% with product interest</div></div>
+    <div class="kpi"><div class="label">Hours saved</div><div class="value" id="kpi-hours">—</div><div class="delta">vs. manual qualifying</div></div>
+  </div>
+
+  <div class="grid">
+
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Ask your CRM</div>
+        <span class="panel-sub">type a question or try a suggestion</span>
+      </div>
+
+      <div class="suggestions">
+        <button class="chip" data-prompt="Who came in this week?">Who came in this week?</button>
+        <button class="chip" data-prompt="What's our pipeline broken down by product?">Pipeline by product</button>
+        <button class="chip" data-prompt="Find leads interested in consulting">Consulting leads</button>
+        <button class="chip" data-prompt="Show me our testimonials about the Operator's Playbook">Find a testimonial</button>
+      </div>
+
+      <div class="log" id="log">
+        <div class="msg agent">Hi. I have access to your CRM and knowledge base. Ask me about specific leads ("who is Priya?"), pipeline ("what's our value this month?"), or recall material ("show me consulting testimonials"). You can also tell me to log notes or draft follow-ups.</div>
+      </div>
+
+      <form id="form" autocomplete="off">
+        <input type="text" id="input" placeholder="Type a message…" required />
+        <button type="submit" class="send" id="send">Send</button>
+      </form>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Recent activity</div>
+        <span class="panel-sub">last 6 leads</span>
+      </div>
+
+      <div class="sparkline">
+        <div class="spark-head">
+          <span class="spark-label">Daily leads · last 14 days</span>
+          <span class="spark-stat" id="spark-total">—</span>
+        </div>
+        <svg id="spark" width="100%" height="42" viewBox="0 0 100 42" preserveAspectRatio="none"></svg>
+      </div>
+
+      <div class="activity-list" id="activity">
+        <div class="empty-state">loading recent activity…</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="upsell">
+    <div class="upsell-head">
+      <span class="upsell-tag">Coming on Pro · Roadmap</span>
+      <h2>Unlock the full sales OS</h2>
+      <p>You're seeing the free tier — chat copilot + lead tracking. Subscribe to plug your whole sales funnel into one place.</p>
+    </div>
+
+    <div class="upsell-grid">
+
+      <div class="upsell-feature">
+        <div class="upsell-icon">▦</div>
+        <h3>Kanban deal board</h3>
+        <p>Drag leads through stages: <em>New → Qualified → Proposal → Won</em>. Auto-progress when the copilot logs activity. No more spreadsheets.</p>
+      </div>
+
+      <div class="upsell-feature">
+        <div class="upsell-icon">@</div>
+        <h3>Multi-channel lead capture</h3>
+        <p>Pulls leads from <strong>Instagram DMs</strong>, <strong>Gmail</strong>, <strong>WhatsApp Business</strong>, your website forms, and Facebook ads — all into the same inbox.</p>
+      </div>
+
+      <div class="upsell-feature">
+        <div class="upsell-icon">↔</div>
+        <h3>CRM sync (two-way)</h3>
+        <p>Bi-directional with <strong>HubSpot</strong>, <strong>Salesforce</strong>, <strong>Pipedrive</strong>. Update in one place, see it everywhere. No more dual data entry.</p>
+      </div>
+
+      <div class="upsell-feature">
+        <div class="upsell-icon">☎</div>
+        <h3>Outbound calling via Vapi</h3>
+        <p>Pick a lead, pick an AI voice agent, click call. Auto-transcribed, auto-summarized, auto-logged. Available 24/7.</p>
+      </div>
+
+      <div class="upsell-feature">
+        <div class="upsell-icon">✉</div>
+        <h3>Email sequences</h3>
+        <p>The copilot drafts personalized cadences, tracks opens and clicks, schedules send times. Replies route back into the chat.</p>
+      </div>
+
+      <div class="upsell-feature">
+        <div class="upsell-icon">⚡</div>
+        <h3>Automation workflows</h3>
+        <p>"When a lead comes in from Instagram, qualify with chat, route to closer in Slack." Visual builder, no code.</p>
+      </div>
+
+    </div>
+
+    <div class="upsell-cta">
+      <button class="cta-btn" id="waitlist-open">Join the Pro waitlist →</button>
+      <span class="cta-note">Early access · launching Q2 · pricing from $49/mo</span>
+    </div>
+  </div>
+
+  <footer>
+    Demo data refreshes from CRM on page load · works with HubSpot, Airtable, custom CRMs
+  </footer>
+
+  <div class="modal-overlay" id="waitlist-modal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-labelledby="waitlist-title">
+      <button class="modal-close" id="waitlist-close" aria-label="Close">×</button>
+
+      <div class="modal-header">
+        <span class="modal-tag">Pro waitlist · early access</span>
+        <h3 id="waitlist-title">Get on the list</h3>
+        <p>Drop your details and we'll reach out when Pro opens up. Want to see it in action first? Check the box and our AI agent will give you a call.</p>
+      </div>
+
+      <form id="waitlist-form" class="modal-form" novalidate>
+        <div class="field">
+          <label for="wl-name">Full name *</label>
+          <input id="wl-name" name="name" type="text" required placeholder="Priya Patel" />
+        </div>
+        <div class="field">
+          <label for="wl-company">Company</label>
+          <input id="wl-company" name="company" type="text" placeholder="Acme Co." />
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="wl-email">Email *</label>
+            <input id="wl-email" name="email" type="email" required placeholder="priya@acme.co" />
+          </div>
+          <div class="field">
+            <label for="wl-phone">Phone</label>
+            <input id="wl-phone" name="phone" type="tel" placeholder="+1 555 123 4567" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="wl-message">Anything we should know? (optional)</label>
+          <textarea id="wl-message" name="message" rows="2" placeholder="What's your team's biggest sales bottleneck?"></textarea>
+        </div>
+
+        <label class="checkbox-field">
+          <input id="wl-demo" name="wants_demo" type="checkbox" />
+          <span>Yes, have your Sales AI agent call me for a quick demo</span>
+        </label>
+
+        <div class="modal-error" id="wl-error"></div>
+
+        <button type="submit" class="modal-submit" id="wl-submit">Submit</button>
+        <p class="modal-fineprint">By submitting, you agree we'll add you to our CRM and reach out about Pro.</p>
+      </form>
+
+      <div class="modal-success" id="waitlist-success" hidden>
+        <div class="success-icon">✓</div>
+        <h4>You're on the list</h4>
+        <p>We'll reach out within 24 hours. If you opted for the demo call, expect a call from <strong>+1 (555) AI-SALES</strong> soon.</p>
+        <button class="modal-submit" id="waitlist-done">Close</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const log = document.getElementById('log');
+  const form = document.getElementById('form');
+  const input = document.getElementById('input');
+  const sendBtn = document.getElementById('send');
+  let history = [];
+
+  document.querySelectorAll('.chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      input.value = btn.dataset.prompt;
+      input.focus();
+    });
+  });
+
+  function renderMarkdown(text) {
+    // Minimal safe markdown: escape HTML first, then apply transforms.
+    const esc = (text || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    return esc
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/(^|\n)[\u2022\-\*] (.+)/g, (m, pfx, body) => `${pfx}<div class="bullet"><span class="bullet-mark">•</span><span>${body}</span></div>`)
+      .replace(/\n/g, '<br>');
+  }
+
+  function addMsg(role, text, opts = {}) {
+    const div = document.createElement('div');
+    div.className = 'msg ' + role + (opts.thinking ? ' thinking' : '');
+    if (opts.thinking) {
+      div.innerHTML = 'thinking <span class="dots"><span></span><span></span><span></span></span>';
+    } else if (role === 'agent') {
+      div.innerHTML = renderMarkdown(text);
+    } else {
+      div.textContent = text;
+    }
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+    return div;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = input.value.trim();
+    if (!msg) return;
+    addMsg('user', msg);
+    input.value = '';
+    sendBtn.disabled = true;
+    const pending = addMsg('agent', '', { thinking: true });
+
+    try {
+      const res = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg, history }),
+      });
+      const data = await res.json();
+      pending.remove();
+      addMsg('agent', data.reply || '(no reply)');
+      history = data.history || history;
+      // Re-fetch metrics — the agent may have created a new lead
+      loadMetrics();
+    } catch (err) {
+      pending.remove();
+      addMsg('agent', 'Error: ' + err.message);
+    } finally {
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  });
+
+  function fmtMoney(v) {
+    if (v == null) return '—';
+    return '$' + Math.round(v).toLocaleString();
+  }
+
+  function initials(name) {
+    const parts = (name || '').trim().split(/\s+/);
+    if (parts.length === 0 || !parts[0]) return '·';
+    return (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+  }
+
+  function renderSparkline(series) {
+    const svg = document.getElementById('spark');
+    if (!series || !series.length) { svg.innerHTML = ''; return; }
+    const counts = series.map(p => p.count);
+    const max = Math.max(...counts, 1);
+    const w = 100, h = 42, pad = 2;
+    const step = (w - pad * 2) / (series.length - 1 || 1);
+    const points = counts.map((c, i) => {
+      const x = pad + i * step;
+      const y = h - pad - (c / max) * (h - pad * 2);
+      return [x, y];
+    });
+    const path = points.map((p, i) => (i === 0 ? 'M' : 'L') + p[0].toFixed(2) + ',' + p[1].toFixed(2)).join(' ');
+    const area = path + ` L${points[points.length - 1][0]},${h} L${points[0][0]},${h} Z`;
+    svg.innerHTML = `
+      <path d="${area}" fill="rgba(139, 92, 246, 0.12)" />
+      <path d="${path}" fill="none" stroke="#8b5cf6" stroke-width="1.5" />
+      ${points.map((p, i) => `<circle cx="${p[0]}" cy="${p[1]}" r="1.5" fill="#8b5cf6" opacity="${i === points.length - 1 ? 1 : 0.5}" />`).join('')}
+    `;
+    const total = counts.reduce((a, b) => a + b, 0);
+    document.getElementById('spark-total').textContent = total + ' total';
+  }
+
+  function renderActivity(items) {
+    const container = document.getElementById('activity');
+    if (!items || !items.length) {
+      container.innerHTML = '<div class="empty-state">No leads yet — try the "Sample lead" prompt to create one.</div>';
+      return;
+    }
+    container.innerHTML = items.map(it => `
+      <div class="activity">
+        <div class="activity-avatar">${initials(it.name)}</div>
+        <div class="activity-body">
+          <div class="activity-name">${escapeHtml(it.name)}</div>
+          <div class="activity-detail">${it.products && it.products.length ? escapeHtml(it.products[0]) : 'No product attached yet'}</div>
+        </div>
+        <div class="activity-meta">
+          <div class="activity-value">${fmtMoney(it.value)}</div>
+          <div class="activity-when">${escapeHtml(it.when)}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function escapeHtml(s) {
+    return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function loadMetrics() {
+    fetch('/metrics')
+      .then(r => r.json())
+      .then(m => {
+        if (m.error) return;
+        document.getElementById('kpi-pipeline').textContent = fmtMoney(m.pipeline_value);
+        document.getElementById('kpi-leads-week').textContent = m.leads_this_week;
+        const delta = m.week_change;
+        const deltaEl = document.getElementById('kpi-leads-delta');
+        if (delta > 0) {
+          deltaEl.textContent = `↑ ${delta} vs. last week`;
+          deltaEl.className = 'delta up';
+        } else if (delta < 0) {
+          deltaEl.textContent = `↓ ${Math.abs(delta)} vs. last week`;
+          deltaEl.className = 'delta down';
+        } else {
+          deltaEl.textContent = 'same as last week';
+          deltaEl.className = 'delta';
+        }
+        document.getElementById('kpi-qualified').textContent = m.conversion_rate + '%';
+        document.getElementById('kpi-hours').textContent = m.hours_saved;
+        renderActivity(m.recent_activity);
+        renderSparkline(m.daily_series);
+      })
+      .catch(() => {});
+  }
+
+  loadMetrics();
+  input.focus();
+
+  // ─── Waitlist modal ──────────────────────────────────────────────────
+  const wlOverlay = document.getElementById('waitlist-modal');
+  const wlForm = document.getElementById('waitlist-form');
+  const wlSuccess = document.getElementById('waitlist-success');
+  const wlError = document.getElementById('wl-error');
+  const wlSubmit = document.getElementById('wl-submit');
+
+  function openWaitlist() {
+    wlOverlay.classList.add('open');
+    wlOverlay.setAttribute('aria-hidden', 'false');
+    setTimeout(() => document.getElementById('wl-name').focus(), 100);
+  }
+  function closeWaitlist() {
+    wlOverlay.classList.remove('open');
+    wlOverlay.setAttribute('aria-hidden', 'true');
+    setTimeout(() => {
+      wlForm.reset();
+      wlForm.hidden = false;
+      wlSuccess.hidden = true;
+      wlError.textContent = '';
+    }, 250);
+  }
+
+  document.getElementById('waitlist-open').addEventListener('click', openWaitlist);
+  document.getElementById('waitlist-close').addEventListener('click', closeWaitlist);
+  document.getElementById('waitlist-done').addEventListener('click', closeWaitlist);
+  wlOverlay.addEventListener('click', (e) => {
+    if (e.target === wlOverlay) closeWaitlist();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && wlOverlay.classList.contains('open')) closeWaitlist();
+  });
+
+  wlForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    wlError.textContent = '';
+
+    const payload = {
+      name: document.getElementById('wl-name').value.trim(),
+      company: document.getElementById('wl-company').value.trim(),
+      email: document.getElementById('wl-email').value.trim(),
+      phone: document.getElementById('wl-phone').value.trim(),
+      message: document.getElementById('wl-message').value.trim(),
+      wants_demo: document.getElementById('wl-demo').checked,
+    };
+
+    if (!payload.name || !payload.email) {
+      wlError.textContent = 'Name and email are required.';
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email)) {
+      wlError.textContent = 'Please enter a valid email address.';
+      return;
+    }
+
+    wlSubmit.disabled = true;
+    wlSubmit.textContent = 'Submitting…';
+
+    try {
+      const res = await fetch('/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || 'Submission failed');
+
+      wlForm.hidden = true;
+      wlSuccess.hidden = false;
+      loadMetrics();
+    } catch (err) {
+      wlError.textContent = err.message || 'Something went wrong. Please try again.';
+    } finally {
+      wlSubmit.disabled = false;
+      wlSubmit.textContent = 'Submit';
+    }
+  });
+</script>
+</body>
+</html>
