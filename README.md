@@ -4,6 +4,8 @@ A FastAPI-powered AI sales agent built on **Claude** (Opus 4.7), **Airtable**
 (CRM), **Supabase** (vector RAG), and **Voyage AI** (embeddings). Answers
 product questions with real testimonials, qualifies leads, sends booking links.
 
+### URL: https://web-production-87c65.up.railway.app/
+
 ## Architecture
 
 ```
